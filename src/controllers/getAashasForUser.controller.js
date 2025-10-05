@@ -16,7 +16,7 @@ export const getAashasForUser = async (req, res) => {
 
     if (!aashas || aashas.length === 0) {
       return res
-        .status(404)
+        .status(201)
         .json({ message: "No Aasha workers found in your area" });
     }
 
@@ -26,7 +26,7 @@ export const getAashasForUser = async (req, res) => {
       aashas,
     });
   } catch (error) {
-    console.error("Error fetching Aashas for user:", error);
+    // console.error("Error fetching Aashas for user:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

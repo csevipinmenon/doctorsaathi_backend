@@ -29,7 +29,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
     const newUser = await Email.create({
       name: user.name,
       email,
-      verificationCode,
+      verificationCode:verificationCode,
       password: hashed,
     });
 
@@ -64,13 +64,13 @@ const verifyEmail = asyncHandler(async (req, res) => {
     const email = user.email;
     const usermain = await User.findOne({ email });
     usermain.password = user.password;
-    user.isVerified = true;
-    user.verificationCode = undefined;
+    
 
     await usermain.save();
     await user.save();
     await Password_Change_Success_Template(user.email, user.name);
-
+    user.isVerified = true;
+    user.verificationCode = undefined;
     return res
       .status(200)
       .json({ success: true, message: "Email verified successfully" });
