@@ -2,4 +2,3 @@
 .prettierignore
 .prettierrc
 app.log
-/node_modules/
