@@ -60,7 +60,7 @@ app.use("/doctorsaathi/admin", adminRouter);
 
 app.use("/doctorsaathi/doctor", doctorRouter);
 
-app.get("/vipin", (req, res) => {
+app.get("/", (req, res) => {
   res.send({
     success: true,
     heath: "All fine!",
