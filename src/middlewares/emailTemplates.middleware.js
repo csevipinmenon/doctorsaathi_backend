@@ -65,7 +65,7 @@ export const Verification_Email_Template = `
           <div class="header">Verify Your Email</div>
           <div class="content">
               <p>Hello <span> {name} </span>,</p>
-              <p>Thank you for DoctorSaathi!</p>
+              <p>Thank you for choosing  DoctorSaathi!</p>
               <p>To verify your email address, please use the following verification code:</p>
               <span class="verification-code">{verificationCode}</span>
               <p>Enter this code in the app or website to complete your Forget Your password.</p>

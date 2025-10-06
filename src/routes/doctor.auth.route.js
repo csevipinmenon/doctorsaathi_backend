@@ -41,6 +41,6 @@ router.get(
   isDoctor,
   getDoctorPatientStats
 );
-router.put("/consult/complete/:id", isAdmin, markConsultCompleted);
+router.put("/consult/complete/:id",verifyToken,isDoctor, markConsultCompleted);
 
 export default router;
