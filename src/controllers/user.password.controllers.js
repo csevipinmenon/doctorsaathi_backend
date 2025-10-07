@@ -1,12 +1,9 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/user.models.js";
 import bcrypt from "bcrypt";
-import {
-  sendVerificationCode,
-  
-} from "../middlewares/emailMsg.middleware.js";
+import { sendVerificationCode } from "../middlewares/emailMsg.middleware.js";
 import Email from "../models/email.model.js";
-import {Password_Change_Success_Template} from "../middlewares/emailTemplates.middleware.js"
+import { Password_Change_Success_Template } from "../middlewares/emailTemplates.middleware.js";
 const forgetPassword = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -26,10 +23,29 @@ const forgetPassword = asyncHandler(async (req, res) => {
     ).toString();
 
     const hashed = await bcrypt.hash(password, 10);
+
+    const existuser = await Email.findOne({ email });
+    if (existuser) {
+      existuser.name = user.name;
+      existuser.verificationCode = verificationCode;
+      existuser.password = hashed;
+
+      await existuser.save({ validateBeforeSave: false });
+      await sendVerificationCode(
+        existuser.email,
+        verificationCode,
+        existuser.name
+      );
+
+      return res
+        .status(200)
+        .json({ message: "Verification code  send successfully", success: true });
+    }
+
     const newUser = await Email.create({
       name: user.name,
       email,
-      verificationCode:verificationCode,
+      verificationCode: verificationCode,
       password: hashed,
     });
 
@@ -64,7 +80,6 @@ const verifyEmail = asyncHandler(async (req, res) => {
     const email = user.email;
     const usermain = await User.findOne({ email });
     usermain.password = user.password;
-    
 
     await usermain.save();
     await user.save();
