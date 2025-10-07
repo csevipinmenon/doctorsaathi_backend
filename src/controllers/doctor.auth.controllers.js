@@ -4,6 +4,9 @@ import Doctor from "../models/doctor.models.js";
 import dotenv from "dotenv";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { deleteFromCloudinary } from "../utils/cloudinary.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import User from "../models/user.models.js"
+import { Prescription } from "../models/preceptional.model.js";
 
 dotenv.config();
 
@@ -161,3 +164,82 @@ export const doctorProfile = async (req, res) => {
 
   res.json({ doctor });
 };
+
+// add prescription
+
+
+export const addPrescription = asyncHandler(async (req, res) => {
+  try {
+    const { userId, prescription } = req.body;
+    const doctorId = req.user?._id; 
+
+    if (!userId || !prescription) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
+    }
+
+    // Validate user and doctor
+    const userExists = await User.findById(userId);
+    if (!userExists) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const doctorExists = await Doctor.findById(doctorId);
+    if (!doctorExists) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Doctor not found" });
+    }
+
+    // Create prescription
+    const newPrescription = await Prescription.create({
+      user: userId,
+      doctor: doctorId,
+      prescription,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Prescription added successfully",
+      prescription: newPrescription,
+    });
+  } catch (error) {
+    console.error("Error adding prescription:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+});
+
+
+
+export const getUserPrescriptions = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user?._id; // assuming user is logged in
+
+    const prescriptions = await Prescription.find({ user: userId })
+      .populate("doctor", "name email")
+      .sort({ createdAt: -1 });
+
+    if (!prescriptions.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No prescriptions found for this user",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      count: prescriptions.length,
+      prescriptions,
+    });
+  } catch (error) {
+    console.error("Error fetching prescriptions:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+});

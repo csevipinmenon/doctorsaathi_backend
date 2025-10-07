@@ -21,8 +21,11 @@ import {
   savePatientConsult,
 } from "../controllers/patientConsult.controller.js";
 import { markConsultCompleted } from "../controllers/markConsultCompleted.controller.js";
+import { addPrescription } from "../controllers/doctor.auth.controllers.js";
 
 const router = express.Router();
+router.post("/addPrescription",verifyToken,isDoctor,addPrescription)
+
 router.post("/signup", upload.single("photo"),signup);
 router.post("/login", login);
 router.post("/forgetPassword", forgetPassword);

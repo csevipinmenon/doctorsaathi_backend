@@ -9,6 +9,8 @@ import {
   forgetPassword,
   verifyEmail,
 } from "../controllers/user.password.controllers.js";
+
+import { isUser } from "../middlewares/auth.middleware.js";
 import {
   consultBook,
   getUserConsults,
@@ -17,6 +19,7 @@ import {
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import { getAashasForUser } from "../controllers/getAashasForUser.controller.js";
 import { enquiry } from "../controllers/email.enquiry.controllers.js";
+import { getUserPrescriptions } from "../controllers/doctor.auth.controllers.js";
 const router = express.Router();
 router.post("/signup", signup);
 router.post("/login", login);
@@ -28,5 +31,6 @@ router.get("/getuser/consult/:email", verifyToken, getUserConsults);
 router.delete("/deleteuser/consult/:id", verifyToken, cancelConsult);
 router.get("/aashas", verifyToken, getAashasForUser);
 router.post("/enquiry",enquiry)
+router.get("/prescription",verifyToken,isUser,getUserPrescriptions)
 
 export default router;
