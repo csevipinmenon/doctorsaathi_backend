@@ -171,7 +171,7 @@ export const doctorProfile = async (req, res) => {
 export const addPrescription = asyncHandler(async (req, res) => {
   try {
     const { userId, prescription } = req.body;
-    const doctorId = req.user?._id; 
+    const doctorId = req.user.id; 
 
     if (!userId || !prescription) {
       return res
@@ -218,7 +218,7 @@ export const addPrescription = asyncHandler(async (req, res) => {
 
 export const getUserPrescriptions = asyncHandler(async (req, res) => {
   try {
-    const userId = req.user?._id; // assuming user is logged in
+    const userId = req.user.id; // assuming user is logged in
 
     const prescriptions = await Prescription.find({ user: userId })
       .populate("doctor", "name email")
