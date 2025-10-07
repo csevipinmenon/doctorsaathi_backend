@@ -24,17 +24,20 @@ const consultBook = async (req, res) => {
 const getUserConsults = async (req, res) => {
   try {
     const { email } = req.params;
-    const consult = await Consult.find({ userEmail: email }).sort({
-      createdAt: -1,
-    });
-     const doctorId = consult.doctor;
-    const doctor  = await Doctor.findById({doctorId})
 
-    res.status(200).json({ consult,doctor});
+    
+    const consults = await Consult.find({ userEmail: email })
+      .sort({ createdAt: -1 })
+      .populate("doctor"); 
+
+    
+    res.status(200).json({ consults });
   } catch (error) {
+    console.error("Error in getUserConsults:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 const cancelConsult = async (req, res) => {
   try {
