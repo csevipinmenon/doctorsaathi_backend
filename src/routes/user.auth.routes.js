@@ -16,7 +16,7 @@ import {
 } from "../controllers/consult.user.controller.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import { getAashasForUser } from "../controllers/getAashasForUser.controller.js";
-
+import { enquiry } from "../controllers/email.enquiry.controllers.js";
 const router = express.Router();
 router.post("/signup", signup);
 router.post("/login", login);
@@ -27,5 +27,6 @@ router.post("/bookconsult", verifyToken, consultBook);
 router.get("/getuser/consult/:email", verifyToken, getUserConsults);
 router.delete("/deleteuser/consult/:id", verifyToken, cancelConsult);
 router.get("/aashas", verifyToken, getAashasForUser);
+router.post("/enquiry",enquiry)
 
 export default router;
