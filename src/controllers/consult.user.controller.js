@@ -28,8 +28,8 @@ const getUserConsults = async (req, res) => {
       createdAt: -1,
     });
      const doctorId = consult.doctor;
-    const doctor  = Doctor.findById({doctorId})
-    
+    const doctor  = await Doctor.findById({doctorId})
+
     res.status(200).json({ consult,doctor});
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
