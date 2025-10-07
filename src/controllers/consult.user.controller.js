@@ -1,4 +1,5 @@
 import {Consult} from "../models/consult.model.js";
+import Doctor from "../models/doctor.models.js"
 
 const consultBook = async (req, res) => {
   try {
@@ -26,7 +27,10 @@ const getUserConsults = async (req, res) => {
     const consult = await Consult.find({ userEmail: email }).sort({
       createdAt: -1,
     });
-    res.status(200).json({ consult });
+     const doctorId = consult.doctor;
+    const doctor  = Doctor.findById({doctorId})
+    
+    res.status(200).json({ consult,doctor});
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
