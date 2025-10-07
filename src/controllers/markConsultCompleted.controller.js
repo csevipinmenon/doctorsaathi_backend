@@ -3,11 +3,12 @@ import { Consult } from "../models/consult.model.js";
 export const markConsultCompleted = async (req, res) => {
   try {
     const { id } = req.params;
+    const doctorId = req.user.id;
 
     const updatedConsult = await Consult.findByIdAndUpdate(
       id,
       { status: "Approved", 
-        doctor:req.user.id,
+        doctor:doctorId,
         completedAt: new Date() },
       { new: true }
     );
