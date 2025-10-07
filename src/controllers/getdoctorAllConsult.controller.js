@@ -8,7 +8,7 @@ export const getPendingConsults = async (req, res) => {
 
     if (!pendingConsults || pendingConsults.length === 0) {
       return res
-        .status(404)
+        .status(201)
         .json({ message: "No pending consultations found" });
     }
 

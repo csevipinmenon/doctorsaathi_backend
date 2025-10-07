@@ -7,7 +7,7 @@ export const markConsultCompleted = async (req, res) => {
     const updatedConsult = await Consult.findByIdAndUpdate(
       id,
       { status: "Approved", 
-        doctor:req.user._id,
+        doctor:req.user.id,
         completedAt: new Date() },
       { new: true }
     );
