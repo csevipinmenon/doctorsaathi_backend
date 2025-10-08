@@ -13,7 +13,7 @@ import {
   addAasha
 } from "../controllers/admin.controller.js";
 import { verifyToken, isAdmin } from "../middlewares/auth.middleware.js";
-import { getAllConsults } from "../controllers/getdoctorAllConsult.controller.js";
+import { getallConsults } from "../controllers/admin.controller.js";
 import { getAllDoctorsPatientStats } from "../controllers/getAllDoctorsPatientStats.controller.js";
 const router = express.Router();
 router.post("/aashaRegister", verifyToken, isAdmin,addAasha);
@@ -24,7 +24,7 @@ router.get("/all-aashas", verifyToken, isAdmin, getAllAasha);
 router.get("/exportall-aashas", verifyToken, isAdmin, exportAllAasha);
 router.get("/exportallusers", verifyToken, isAdmin, exportAllusers);
 router.get("/exportsalldoctors", verifyToken, isAdmin, exportAlldoctors);
-router.get("/allConsults", verifyToken, isAdmin, getAllConsults);
+router.get("/allConsults", verifyToken, isAdmin, getallConsults);
 router.get(
   "/doctors-patient-stats",
   verifyToken,

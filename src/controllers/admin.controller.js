@@ -2,6 +2,7 @@ import User from "../models/user.models.js";
 import ExcelJS from "exceljs";
 import Doctor from "../models/doctor.models.js";
 import Aasha from "../models/aasha.model.js";
+import { Consult } from "../models/consult.model.js";
 
 export const adminProfile = async (req, res) => {
   const user = await User.findById(req.user.id).select("-password");
@@ -268,5 +269,33 @@ export const addAasha = async (req, res) => {
   } catch (error) {
     console.error("Error adding Aasha:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+
+export const getallConsults = async (req, res) => {
+  try {
+    const consults = await Consult.find().sort({
+      createdAt: -1,
+    });
+
+    if (!consults || consults.length === 0) {
+      return res
+        .status(201)
+        .json({ message: "No consultations found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      count: consults.length,
+      consultations: consults,
+    });
+  } catch (error) {
+    console.error("Error fetching all consultations:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Could not fetch all consultations.",
+    });
   }
 };
