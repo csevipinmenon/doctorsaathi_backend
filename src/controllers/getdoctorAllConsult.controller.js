@@ -2,28 +2,28 @@ import { Consult } from "../models/consult.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/user.models.js"
 
-export const getPendingConsults = async (req, res) => {
+export const getAllConsults = async (req, res) => {
   try {
-    const pendingConsults = await Consult.find({ status: "pending" }).sort({
+    const consults = await Consult.find().sort({
       createdAt: -1,
     });
 
-    if (!pendingConsults || pendingConsults.length === 0) {
+    if (!consults || consults.length === 0) {
       return res
         .status(201)
-        .json({ message: "No pending consultations found" });
+        .json({ message: "No consultations found" });
     }
 
     res.status(200).json({
       success: true,
-      count: pendingConsults.length,
-      consultations: pendingConsults,
+      count: consults.length,
+      consultations: consults,
     });
   } catch (error) {
-    console.error("Error fetching pending consultations:", error.message);
+    console.error("Error fetching all consultations:", error.message);
     res.status(500).json({
       success: false,
-      message: "Server error. Could not fetch pending consultations.",
+      message: "Server error. Could not fetch all consultations.",
     });
   }
 };
