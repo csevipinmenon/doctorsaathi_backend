@@ -1,5 +1,6 @@
-import {Consult} from "../models/consult.model.js";
-import Doctor from "../models/doctor.models.js"
+import { Consult } from "../models/consult.model.js";
+import Doctor from "../models/doctor.models.js";
+import User from "../models/user.models.js";
 
 const consultBook = async (req, res) => {
   try {
@@ -25,19 +26,39 @@ const getUserConsults = async (req, res) => {
   try {
     const { email } = req.params;
 
-    
+    if (!email) {
+      return res.status(400).json({ error: "User email is required." });
+    }
+
     const consults = await Consult.find({ userEmail: email })
       .sort({ createdAt: -1 })
-      .populate("doctor"); 
+      .populate("doctor");
 
-    
-    res.status(200).json({ consults });
+    if (!consults || consults.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No consults found for this user.",
+        data: [],
+      });
+    }
+
+    const user = await User.findOne({ email }, "_id name email");
+
+    const consultsWithUser = consults.map((consult) => ({
+      ...consult.toObject(),
+      userDetails: user || null,
+    }));
+
+    res.status(200).json({
+      success: true,
+      count: consultsWithUser.length,
+      data: consultsWithUser,
+    });
   } catch (error) {
     console.error("Error in getUserConsults:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 const cancelConsult = async (req, res) => {
   try {
