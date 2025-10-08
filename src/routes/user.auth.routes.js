@@ -14,7 +14,7 @@ import { isUser } from "../middlewares/auth.middleware.js";
 import {
   consultBook,
   getUserConsults,
-  cancelConsult,
+  completeConsult,
 } from "../controllers/consult.user.controller.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import { getAashasForUser } from "../controllers/getAashasForUser.controller.js";
@@ -29,7 +29,7 @@ router.post("/verifyemail", verifyEmail);
 router.get("/profile", verifyToken, userProfile);
 router.post("/bookconsult", verifyToken, consultBook);
 router.get("/getuser/consult/:email", verifyToken, getUserConsults);
-router.delete("/deleteuser/consult/:id", verifyToken, cancelConsult);
+router.delete("/complete/consult/:id", verifyToken, completeConsult);
 router.get("/aashas", verifyToken, getAashasForUser);
 router.post("/enquiry",enquiry)
 router.get("/prescription",verifyToken,isUser,getUserPrescriptions)

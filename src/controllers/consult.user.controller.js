@@ -60,16 +60,34 @@ const getUserConsults = async (req, res) => {
   }
 };
 
-const cancelConsult = async (req, res) => {
+
+const completeConsult = async (req, res) => {
   try {
     const { id } = req.params;
-    await Consult.findByIdAndDelete(id);
-    res
-      .status(200)
-      .json({ message: "Consult cancelled successfully", success: true });
+
+    
+    const updatedConsult = await Consult.findByIdAndUpdate(
+      id,
+      { status: "completed" },
+      { new: true }
+    );
+
+    if (!updatedConsult) {
+      return res
+        .status(404)
+        .json({ message: "Consult not found", success: false });
+    }
+
+    res.status(200).json({
+      message: "Consult marked as completed successfully",
+      success: true,
+      consult: updatedConsult,
+    });
   } catch (error) {
-    res.status(500).json({ errror: "Internal Server Error" });
+    console.error("Error completing consult:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-export { consultBook, getUserConsults, cancelConsult };
+
+export { consultBook, getUserConsults, completeConsult };
