@@ -1,5 +1,5 @@
 import { Consult } from "../models/consult.model.js";
-import User from "../models/user.models.js"
+import User from "../models/user.models.js";
 import { StreamChat } from "stream-chat";
 
 const apiKey = process.env.STREAM_API_KEY;
@@ -11,7 +11,7 @@ export const markConsultCompleted = async (req, res) => {
     const { id } = req.params;
     const doctorId = req.user.id;
 
-    // 1 Approve the consult
+    //  Approve the consult
     const updatedConsult = await Consult.findByIdAndUpdate(
       id,
       {
@@ -33,19 +33,24 @@ export const markConsultCompleted = async (req, res) => {
     }
     const patientId = patient._id.toString();
 
-    // 3️Upsert users in Stream
+    // 3 Upsert both users in Stream
     await serverClient.upsertUsers([
       { id: doctorId, name: "Doctor " + doctorId.slice(-4) },
       { id: patientId, name: "Patient " + patientId.slice(-4) },
     ]);
 
-    
+    // Create or get channel (avoid duplicate errors)
     const channel = serverClient.channel("messaging", {
       members: [doctorId, patientId],
+      // Use unique ID to prevent duplicate creation
+      id: `doctor_${doctorId}_patient_${patientId}`,
       name: `Doctor_${doctorId}_Patient_${patientId}`,
     });
 
-    await channel.create();
+    // If channel exists, create() just returns existing channel, safe to call
+    await channel.create().catch((err) => {
+      if (!err.message.includes("already exists")) throw err;
+    });
 
     res.json({
       message: "Consult approved and chat created automatically",
