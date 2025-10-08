@@ -48,7 +48,7 @@ import adminRouter from "./routes/admin.auth.route.js";
 // import doctor routes
 
 import doctorRouter from "./routes/doctor.auth.route.js";
-
+import getUserAndDoctorDetailsRouter from "./routes/getDoctorAndUserDetails.routes.js"
 //use routes user routes
 
 app.use("/doctorsaathi/user", userRouter);
@@ -59,6 +59,10 @@ app.use("/doctorsaathi/admin", adminRouter);
 // use doctor routes
 
 app.use("/doctorsaathi/doctor", doctorRouter);
+
+//get user and doctor details
+
+app.use("/doctorsaathi",getUserAndDoctorDetailsRouter)
 
 app.get("/", (req, res) => {
   res.send({
