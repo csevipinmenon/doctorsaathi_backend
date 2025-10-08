@@ -20,6 +20,7 @@ import { verifyToken } from "../middlewares/auth.middleware.js";
 import { getAashasForUser } from "../controllers/getAashasForUser.controller.js";
 import { enquiry } from "../controllers/email.enquiry.controllers.js";
 import { getUserPrescriptions } from "../controllers/doctor.auth.controllers.js";
+import { generateToken } from "../controllers/toekn.controller.js";
 const router = express.Router();
 router.post("/signup", signup);
 router.post("/login", login);
@@ -32,5 +33,6 @@ router.delete("/deleteuser/consult/:id", verifyToken, cancelConsult);
 router.get("/aashas", verifyToken, getAashasForUser);
 router.post("/enquiry",enquiry)
 router.get("/prescription",verifyToken,isUser,getUserPrescriptions)
+router.get("/token/:userId",generateToken)
 
 export default router;
