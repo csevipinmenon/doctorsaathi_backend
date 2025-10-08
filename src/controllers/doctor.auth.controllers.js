@@ -225,8 +225,8 @@ export const getUserPrescriptions = asyncHandler(async (req, res) => {
       .sort({ createdAt: -1 });
 
     if (!prescriptions.length) {
-      return res.status(404).json({
-        success: false,
+      return res.status(201).json({
+        success: true,
         message: "No prescriptions found for this user",
       });
     }
