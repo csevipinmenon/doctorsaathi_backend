@@ -22,7 +22,7 @@ import {
 } from "../controllers/patientConsult.controller.js";
 import { markConsultCompleted } from "../controllers/markConsultCompleted.controller.js";
 import { addPrescription } from "../controllers/doctor.auth.controllers.js";
-
+import { getDoctorApprovedConsults } from "../controllers/getdoctorAllConsult.controller.js";
 const router = express.Router();
 router.post("/addPrescription",verifyToken,isDoctor,addPrescription)
 
@@ -32,6 +32,9 @@ router.post("/forgetPassword", forgetPassword);
 router.post("/verifyemail",verifyEmail);
 router.get("/profile", verifyToken, isDoctor, doctorProfile);
 router.get("/pendingConsults", verifyToken, isDoctor, getPendingConsults);
+router.get("/approvedConsults", verifyToken, isDoctor, getDoctorApprovedConsults);
+
+
 router.post(
   "/patient-consult/:doctorEmail",
   verifyToken,
