@@ -29,7 +29,7 @@ router.post("/verifyemail", verifyEmail);
 router.get("/profile", verifyToken, userProfile);
 router.post("/bookconsult", verifyToken, consultBook);
 router.get("/getuser/consult/:email", verifyToken, getUserConsults);
-router.delete("/complete/consult/:id", verifyToken, completeConsult);
+router.post("/complete/consult/:id", verifyToken, completeConsult);
 router.get("/aashas", verifyToken, getAashasForUser);
 router.post("/enquiry",enquiry)
 router.get("/prescription",verifyToken,isUser,getUserPrescriptions)
