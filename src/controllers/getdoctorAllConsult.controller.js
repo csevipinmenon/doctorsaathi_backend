@@ -1,5 +1,6 @@
 import { Consult } from "../models/consult.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import User from "../models/user.models.js"
 
 export const getPendingConsults = async (req, res) => {
   try {
@@ -29,9 +30,11 @@ export const getPendingConsults = async (req, res) => {
 
 
 
+
+
 export const getDoctorApprovedConsults = asyncHandler(async (req, res) => {
   try {
-    const doctorId = req.user.id; // doctor ID from JWT or session
+    const doctorId = req.user.id;
 
     if (!doctorId) {
       return res.status(401).json({
@@ -40,25 +43,38 @@ export const getDoctorApprovedConsults = asyncHandler(async (req, res) => {
       });
     }
 
-    // Fetch all approved consults for the logged-in doctor
     const approvedConsults = await Consult.find({
       doctor: doctorId,
       status: "approved",
-    })
-      .populate("doctor", "name specialization email")
-      .sort({ createdAt: -1 });
+    }).sort({ createdAt: -1 });
 
-    if (!approvedConsults || approvedConsults.length === 0) {
-      return res.status(201).json({
+    if (!approvedConsults.length) {
+      return res.status(200).json({
         success: true,
         message: "No approved consults found for this doctor.",
+        data: [],
       });
     }
 
+    // Fetch user details for each consult
+    const consultsWithUser = await Promise.all(
+      approvedConsults.map(async (consult) => {
+        const user = await User.findOne(
+          { email: consult.userEmail },
+          "_id name email"
+        ); 
+
+        return {
+          ...consult.toObject(),
+          userDetails: user || null, // attach user info
+        };
+      })
+    );
+
     return res.status(200).json({
       success: true,
-      count: approvedConsults.length,
-      data: approvedConsults,
+      count: consultsWithUser.length,
+      data: consultsWithUser,
     });
   } catch (error) {
     console.error("Error fetching doctor approved consults:", error);
