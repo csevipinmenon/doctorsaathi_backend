@@ -15,6 +15,7 @@ import {
 import { verifyToken, isAdmin } from "../middlewares/auth.middleware.js";
 import { getallConsults } from "../controllers/admin.controller.js";
 import { getAllDoctorsPatientStats } from "../controllers/getAllDoctorsPatientStats.controller.js";
+import {getAllPatientConsults} from "../controllers/admin.controller.js"
 const router = express.Router();
 router.post("/aashaRegister", verifyToken, isAdmin,addAasha);
 router.get("/profile", verifyToken, isAdmin, adminProfile);
@@ -35,5 +36,6 @@ router.get(
 router.get("/deletedoctor", verifyToken, isAdmin, removeDoctorByEmail);
 router.get("/deleteuser", verifyToken, isAdmin, removeUserByEmail);
 router.get("/deleteAasha", verifyToken, isAdmin, removeAashaByEmail);
+router.get("/alldoctors-stats",verifyToken,isAdmin,getAllPatientConsults)
 
 export default router;

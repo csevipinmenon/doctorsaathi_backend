@@ -3,6 +3,8 @@ import ExcelJS from "exceljs";
 import Doctor from "../models/doctor.models.js";
 import Aasha from "../models/aasha.model.js";
 import { Consult } from "../models/consult.model.js";
+import { PatientConsult } from "../models/patientCount.model.js";
+
 
 export const adminProfile = async (req, res) => {
   const user = await User.findById(req.user.id).select("-password");
@@ -229,24 +231,35 @@ export const removeDoctorByEmail = async (req, res) => {
   }
 };
 
-
 // Admin: Add a new Aasha
 export const addAasha = async (req, res) => {
   try {
-    const { name, email, phone, gender, location, Aadhar, age, pincode } = req.body;
+    const { name, email, phone, gender, location, Aadhar, age, pincode } =
+      req.body;
 
-  
-    if (!name || !email || !phone || !gender || !location || !Aadhar || !age || !pincode) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !gender ||
+      !location ||
+      !Aadhar ||
+      !age ||
+      !pincode
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
     }
 
-    
     const existingAasha = await Aasha.findOne({ email });
     if (existingAasha) {
-      return res.status(400).json({ success: false, message: "Aasha with this email already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "Aasha with this email already exists",
+      });
     }
 
-    
     const newAasha = new Aasha({
       name,
       email,
@@ -256,7 +269,7 @@ export const addAasha = async (req, res) => {
       Aadhar,
       age,
       pincode,
-      role: "aasha", 
+      role: "aasha",
     });
 
     await newAasha.save();
@@ -272,8 +285,6 @@ export const addAasha = async (req, res) => {
   }
 };
 
-
-
 export const getallConsults = async (req, res) => {
   try {
     const consults = await Consult.find().sort({
@@ -281,9 +292,7 @@ export const getallConsults = async (req, res) => {
     });
 
     if (!consults || consults.length === 0) {
-      return res
-        .status(201)
-        .json({ message: "No consultations found" });
+      return res.status(201).json({ message: "No consultations found" });
     }
 
     res.status(200).json({
@@ -296,6 +305,63 @@ export const getallConsults = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error. Could not fetch all consultations.",
+    });
+  }
+};
+
+// get all doctor stats
+
+
+
+export const getAllPatientConsults = async (req, res) => {
+  try {
+    
+    const patientConsults = await PatientConsult.find().sort({ count: -1 });
+
+    if (!patientConsults || patientConsults.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No patient consult data found.",
+        data: [],
+      });
+    }
+
+   
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+
+   
+    const detailedConsults = await Promise.all(
+      patientConsults.map(async (record) => {
+        const totalCount = record.count || 0;
+
+        const todayCount = await PatientConsult.countDocuments({
+          doctorEmail: record.doctorEmail,
+          createdAt: { $gte: startOfToday, $lte: endOfToday },
+        });
+
+        return {
+          doctorEmail: record.doctorEmail,
+          totalCount,
+          todayCount,
+        };
+      })
+    );
+
+  
+    res.status(200).json({
+      success: true,
+      count: detailedConsults.length,
+      data: detailedConsults,
+    });
+  } catch (error) {
+    console.error("Error fetching all patient consults:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error while fetching consult data",
+      error: error.message,
     });
   }
 };
