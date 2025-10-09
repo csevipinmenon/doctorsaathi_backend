@@ -337,7 +337,7 @@ export const getAllPatientConsults = async (req, res) => {
       patientConsults.map(async (record) => {
         const doctor = await Doctor.findOne(
           { email: record.doctorEmail },
-          "name specialization email "
+          "name specialist"
         );
 
         
