@@ -48,9 +48,13 @@ export const markConsultCompleted = async (req, res) => {
     });
 
     // If channel exists, create() just returns existing channel, safe to call
-    await channel.create().catch((err) => {
-      if (!err.message.includes("already exists")) throw err;
-    });
+    try {
+      await channel.create();
+    } catch (err) {
+      if (err?.code !== 16) {
+        throw err;
+      }
+    }
 
     res.json({
       message: "Consult approved and chat created automatically",
