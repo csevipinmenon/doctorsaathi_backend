@@ -6,7 +6,7 @@ const PatientContSchema = new Schema(
       type: String,
       required: true,
     },
-    count: String,
+    count: Number,
   },
 
   { timestamps: true }
