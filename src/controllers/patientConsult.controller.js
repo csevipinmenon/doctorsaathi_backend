@@ -1,28 +1,63 @@
 import { PatientConsult } from "../models/patientCount.model.js";
+import Doctor from "../models/doctor.models.js";
 
 export const savePatientConsult = async (req, res) => {
   try {
     const { doctorEmail } = req.params;
 
     if (!doctorEmail) {
-      return res.status(400).json({ message: "Doctor email is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Doctor email is required" });
     }
 
-    const updatedRecord = await PatientConsult.findOneAndUpdate(
-      { doctorEmail },
-      { $inc: { count: 1 } },
-      { new: true, upsert: true }
-    );
+    
+    const doctor = await Doctor.findOne({ email: doctorEmail });
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctor not found in the system",
+      });
+    }
 
-    res.status(201).json({
-      message: "Patient consult count increased successfully",
-      data: updatedRecord,
-    });
+ 
+    let patientConsult = await PatientConsult.findOne({ doctorEmail });
+
+    if (!patientConsult) {
+     
+      patientConsult = await PatientConsult.create({
+        doctorEmail,
+        count: 1,
+      });
+
+      return res.status(201).json({
+        success: true,
+        message: "New patient consult record created successfully",
+        data: patientConsult,
+      });
+    } else {
+      
+      patientConsult.count = (patientConsult.count || 0) + 1;
+      await patientConsult.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Patient consult count updated successfully",
+        data: patientConsult,
+      });
+    }
   } catch (error) {
     console.error("Error saving patient consult:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };
+
+
+
 
 export const getDoctorPatientStats = async (req, res) => {
   try {
