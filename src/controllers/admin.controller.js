@@ -326,17 +326,24 @@ export const getAllPatientConsults = async (req, res) => {
       });
     }
 
-   
+    
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
     const endOfToday = new Date();
     endOfToday.setHours(23, 59, 59, 999);
 
-   
+    
     const detailedConsults = await Promise.all(
       patientConsults.map(async (record) => {
+        const doctor = await Doctor.findOne(
+          { email: record.doctorEmail },
+          "name specialization email "
+        );
+
+        
         const totalCount = record.count || 0;
 
+        
         const todayCount = await PatientConsult.countDocuments({
           doctorEmail: record.doctorEmail,
           createdAt: { $gte: startOfToday, $lte: endOfToday },
@@ -344,13 +351,14 @@ export const getAllPatientConsults = async (req, res) => {
 
         return {
           doctorEmail: record.doctorEmail,
+          doctorDetails: doctor || null,
           totalCount,
           todayCount,
         };
       })
     );
 
-  
+    
     res.status(200).json({
       success: true,
       count: detailedConsults.length,
