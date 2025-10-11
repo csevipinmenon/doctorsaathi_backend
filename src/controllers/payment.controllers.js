@@ -8,6 +8,12 @@ dotenv.config({
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); 
 
+// console.log(process.env.STRIPE_SECRET_KEY);
+// console.log("base url",process.env.FRONTEND_URL);
+
+
+
+
 export const payment = asyncHandler(async (req, res) => {
   try {
     const { fullName, email, message, amount } = req.body;
@@ -29,7 +35,7 @@ export const payment = asyncHandler(async (req, res) => {
   
     const price = await stripe.prices.create({
       product: product.id,
-      unit_amount: Math.round(amount * 100), 
+      unit_amount: amount * 100, 
       currency: "inr",
     });
 
