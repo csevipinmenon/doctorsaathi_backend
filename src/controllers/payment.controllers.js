@@ -44,7 +44,7 @@ export const payment = asyncHandler(async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: price.id, quantity: 1 }],
       mode: "payment",
-      success_url: `${baseUrl}/paymnet/success`,
+      success_url: `${baseUrl}/payment/success`,
       cancel_url: `${baseUrl}/payment/cancel`,
       customer_email: email,
       metadata: {
