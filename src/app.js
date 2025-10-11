@@ -38,6 +38,8 @@ app.use(express.static("public"));
 app.use(cookieParser());
 app.use(bodyParser.json());
 
+import paymentRouter from "./routes/payment.route.js"
+
 //import user  routes
 
 import userRouter from "./routes/user.auth.routes.js";
@@ -50,6 +52,8 @@ import adminRouter from "./routes/admin.auth.route.js";
 import doctorRouter from "./routes/doctor.auth.route.js";
 import getUserAndDoctorDetailsRouter from "./routes/getDoctorAndUserDetails.routes.js"
 //use routes user routes
+
+app.use("/doctorsaathi",paymentRouter)
 
 app.use("/doctorsaathi/user", userRouter);
 
